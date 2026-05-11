@@ -1220,7 +1220,7 @@ async function initRouter() {
     link.style.color = link.dataset.nav === page ? '#00d4ff' : '';
   });
   if (page === 'home') { setTimeout(() => { initCountUp(); renderFeatured(); }, 500); }
-  if (page === 'portfolio') { renderPortfolio(); setTimeout(triggerUnderline, 500); }
+  if (page === 'gallery') { renderPortfolio(); setTimeout(triggerUnderline, 500); }
   if (page === 'about') { setTimeout(initSkillBars, 500); }
 }
 
@@ -1408,7 +1408,7 @@ document.getElementById('admin-form-c2d3').addEventListener('submit', async func
   }
 
   closeAdminModal();
-  if (currentPage === 'portfolio') renderPortfolio();
+  if (currentPage === 'gallery') renderPortfolio();
   if (currentPage === 'home') renderFeatured();
 });
 
@@ -1473,7 +1473,7 @@ document.getElementById('lightbox-delete-btn-a7b8').addEventListener('click', as
   await deleteItem(lightboxItemId);
   closeLightbox();
   showToast('Item deleted.');
-  if (currentPage === 'portfolio') renderPortfolio();
+  if (currentPage === 'gallery') renderPortfolio();
   if (currentPage === 'home') renderFeatured();
 });
 
