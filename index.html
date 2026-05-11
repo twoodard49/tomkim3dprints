@@ -1,0 +1,1717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="color-scheme" content="dark" />
+<title>TomKim3dprints - 3D Print Portfolio & Business Site</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+  --bg-primary: #080c14;
+  --bg-secondary: #0d1b2e;
+  --accent-cyan: #00d4ff;
+  --accent-purple: #7c3aed;
+  --accent-emerald: #10b981;
+  --card-bg: rgba(255,255,255,0.04);
+  --card-border: rgba(0,212,255,0.15);
+  --text-primary: #f0f4ff;
+  --text-muted: #7a8ba0;
+  --glow-cyan: 0 0 20px rgba(0,212,255,0.3);
+  --glow-purple: 0 0 20px rgba(124,58,237,0.3);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  font-family:'Inter',sans-serif;
+  background:var(--bg-primary);
+  color:var(--text-primary);
+  overflow-x:hidden;
+  min-height:100vh;
+}
+h1,h2,h3,h4,h5,h6,.font-orbitron { font-family:'Orbitron',sans-serif; }
+.font-mono { font-family:'JetBrains Mono',monospace; }
+
+/* Animated Background */
+#animated-bg {
+  position:fixed; inset:0; z-index:0; pointer-events:none;
+  background:radial-gradient(ellipse at 50% 50%, #0d1b2e 0%, #080c14 70%);
+}
+.bg-orb {
+  position:absolute; border-radius:50%; filter:blur(120px); opacity:0.4;
+}
+.bg-orb-1 {
+  width:500px; height:500px; background:var(--accent-cyan); top:-100px; left:-100px;
+  animation:orbDrift1 20s ease-in-out infinite;
+}
+.bg-orb-2 {
+  width:400px; height:400px; background:var(--accent-purple); bottom:-50px; right:-50px;
+  animation:orbDrift2 25s ease-in-out infinite;
+}
+.bg-orb-3 {
+  width:350px; height:350px; background:#0d9488; top:50%; left:60%;
+  animation:orbDrift3 22s ease-in-out infinite;
+}
+@keyframes orbDrift1 {
+  0%,100%{transform:translate(0,0)}25%{transform:translate(80px,60px)}50%{transform:translate(40px,120px)}75%{transform:translate(-30px,50px)}
+}
+@keyframes orbDrift2 {
+  0%,100%{transform:translate(0,0)}25%{transform:translate(-60px,-40px)}50%{transform:translate(-100px,-80px)}75%{transform:translate(-30px,-120px)}
+}
+@keyframes orbDrift3 {
+  0%,100%{transform:translate(0,0)}33%{transform:translate(-80px,40px)}66%{transform:translate(60px,-60px)}
+}
+
+/* Print scan lines */
+.print-line {
+  position:absolute; left:0; width:100%; height:1px;
+  background:linear-gradient(90deg,transparent 0%,rgba(0,212,255,0.08) 20%,rgba(0,212,255,0.15) 50%,rgba(0,212,255,0.08) 80%,transparent 100%);
+  animation:scanUp var(--duration) linear infinite;
+  opacity:0;
+}
+@keyframes scanUp {
+  0%{bottom:-2px;opacity:0}10%{opacity:var(--max-opacity)}90%{opacity:var(--max-opacity)}100%{bottom:100%;opacity:0}
+}
+
+/* Dot grid overlay */
+.dot-grid {
+  position:absolute; inset:0;
+  background-image:radial-gradient(rgba(0,212,255,0.06) 1px, transparent 1px);
+  background-size:30px 30px;
+}
+
+/* Glassmorphism card */
+.glass-card {
+  background:var(--card-bg);
+  border:1px solid var(--card-border);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border-radius:16px;
+  transition:all 0.3s ease;
+}
+.glass-card:hover {
+  transform:translateY(-4px);
+  box-shadow:0 8px 40px rgba(0,212,255,0.15);
+  border-color:rgba(0,212,255,0.35);
+}
+
+/* Navbar */
+#navbar-main {
+  transition:all 0.3s ease;
+}
+#navbar-main.scrolled {
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  background:rgba(8,12,20,0.85);
+  box-shadow:0 4px 30px rgba(0,212,255,0.15);
+  border-bottom:1px solid rgba(0,212,255,0.12);
+}
+
+/* Cyan glow text */
+.cyan-glow { text-shadow:0 0 10px rgba(0,212,255,0.5),0 0 30px rgba(0,212,255,0.2); }
+
+/* Page transitions */
+.page-section { 
+  opacity:0; transform:translateY(15px); 
+  transition:opacity 0.4s ease, transform 0.4s ease;
+}
+.page-section.active { opacity:1; transform:translateY(0); }
+
+/* Animated gradient border */
+.gradient-border {
+  position:relative; overflow:hidden;
+}
+.gradient-border::before {
+  content:''; position:absolute; inset:-2px; border-radius:18px;
+  background:conic-gradient(from var(--border-angle,0deg),var(--accent-cyan),var(--accent-purple),var(--accent-emerald),var(--accent-cyan));
+  animation:rotateBorder 4s linear infinite;
+  z-index:-1;
+}
+.gradient-border::after {
+  content:''; position:absolute; inset:1px; border-radius:16px;
+  background:var(--bg-primary); z-index:-1;
+}
+@keyframes rotateBorder { to { --border-angle:360deg; } }
+@property --border-angle { syntax:'<angle>'; initial-value:0deg; inherits:false; }
+
+/* Hero word animation */
+.hero-word { opacity:0; transform:translateY(20px); animation:fadeInWord 0.6s ease forwards; }
+@keyframes fadeInWord { to{opacity:1;transform:translateY(0)} }
+
+/* Wireframe cube */
+.cube-container {
+  width:200px; height:200px; perspective:600px;
+}
+.cube {
+  width:100%; height:100%; position:relative;
+  transform-style:preserve-3d;
+  animation:rotateCube 12s linear infinite;
+}
+@keyframes rotateCube {
+  0%{transform:rotateX(-20deg) rotateY(0deg)}100%{transform:rotateX(-20deg) rotateY(360deg)}
+}
+.cube-face {
+  position:absolute; width:200px; height:200px;
+  border:1.5px solid rgba(0,212,255,0.35);
+  background:rgba(0,212,255,0.02);
+}
+.cube-face.front  { transform:translateZ(100px); }
+.cube-face.back   { transform:rotateY(180deg) translateZ(100px); }
+.cube-face.right  { transform:rotateY(90deg) translateZ(100px); }
+.cube-face.left   { transform:rotateY(-90deg) translateZ(100px); }
+.cube-face.top    { transform:rotateX(90deg) translateZ(100px); }
+.cube-face.bottom { transform:rotateX(-90deg) translateZ(100px); }
+
+/* Skill bar animation */
+.skill-bar-fill {
+  width:0; transition:width 1.2s cubic-bezier(0.25,0.46,0.45,0.94);
+}
+.skill-bar-fill.animated { width:var(--target-width); }
+
+/* Count-up */
+.count-up { font-variant-numeric:tabular-nums; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width:8px; }
+::-webkit-scrollbar-track { background:var(--bg-primary); }
+::-webkit-scrollbar-thumb { background:rgba(0,212,255,0.3); border-radius:4px; }
+::-webkit-scrollbar-thumb:hover { background:rgba(0,212,255,0.5); }
+
+/* Button pulse */
+.btn-pulse:hover { animation:pulse 1s ease infinite; }
+@keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(0,212,255,0.4)}50%{box-shadow:0 0 0 10px rgba(0,212,255,0)} }
+
+/* Testimonial carousel */
+.testimonial-track {
+  display:flex; gap:1.5rem;
+  animation:scrollTestimonials 20s linear infinite;
+}
+.testimonial-track:hover { animation-play-state:paused; }
+@keyframes scrollTestimonials {
+  0%{transform:translateX(0)}100%{transform:translateX(calc(-100% / 2 - 0.75rem))}
+}
+
+/* Category badge colors */
+.badge-miniatures { background:rgba(0,212,255,0.15); color:#00d4ff; border:1px solid rgba(0,212,255,0.3); }
+.badge-functional { background:rgba(16,185,129,0.15); color:#10b981; border:1px solid rgba(16,185,129,0.3); }
+.badge-art { background:rgba(124,58,237,0.15); color:#7c3aed; border:1px solid rgba(124,58,237,0.3); }
+.badge-prototypes { background:rgba(245,158,11,0.15); color:#f59e0b; border:1px solid rgba(245,158,11,0.3); }
+.badge-custom { background:rgba(239,68,68,0.15); color:#ef4444; border:1px solid rgba(239,68,68,0.3); }
+
+/* Modal */
+.modal-overlay {
+  opacity:0; pointer-events:none; transition:opacity 0.3s ease;
+}
+.modal-overlay.open { opacity:1; pointer-events:auto; }
+
+/* Toast */
+.toast { transform:translateY(-20px); opacity:0; transition:all 0.4s ease; }
+.toast.show { transform:translateY(0); opacity:1; }
+
+/* Scroll indicator bounce */
+@keyframes bounce { 0%,100%{transform:translateY(0)}50%{transform:translateY(8px)} }
+.scroll-indicator { animation:bounce 2s ease-in-out infinite; }
+
+/* Process timeline connector */
+.timeline-connector {
+  position:absolute; top:50%; left:100%; width:100%; height:2px;
+  background:linear-gradient(90deg,var(--accent-cyan),transparent);
+}
+
+/* Mobile menu */
+#mobile-menu-overlay {
+  transform:translateX(100%); transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);
+}
+#mobile-menu-overlay.open { transform:translateX(0); }
+
+/* Material pill */
+.material-pill {
+  background:rgba(0,212,255,0.08); border:1px solid rgba(0,212,255,0.2);
+  padding:6px 16px; border-radius:999px; font-size:0.85rem;
+  color:var(--accent-cyan); font-family:'JetBrains Mono',monospace;
+  transition:all 0.2s ease;
+}
+.material-pill:hover { background:rgba(0,212,255,0.18); }
+
+/* CTA banner gradient */
+.cta-gradient {
+  background:linear-gradient(135deg, rgba(0,212,255,0.15), rgba(124,58,237,0.15));
+  border:1px solid rgba(0,212,255,0.2);
+}
+
+/* Filter pill */
+.filter-pill {
+  padding:8px 20px; border-radius:999px; cursor:pointer;
+  background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1);
+  color:var(--text-muted); font-size:0.875rem; transition:all 0.2s ease;
+  white-space:nowrap;
+}
+.filter-pill.active, .filter-pill:hover {
+  background:rgba(0,212,255,0.12); border-color:rgba(0,212,255,0.4);
+  color:var(--accent-cyan); box-shadow:0 0 15px rgba(0,212,255,0.15);
+}
+
+/* Lightbox */
+#lightbox-overlay { transition:opacity 0.3s ease; }
+
+/* Edit mode */
+.edit-overlay {
+  position:absolute; inset:0; background:rgba(0,0,0,0.5);
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; transition:opacity 0.2s ease; border-radius:16px;
+}
+.edit-mode .edit-overlay { opacity:1; cursor:pointer; }
+
+/* Animated underline */
+.animated-underline {
+  position:relative; display:inline-block;
+}
+.animated-underline::after {
+  content:''; position:absolute; bottom:-8px; left:0; width:0;
+  height:3px; background:linear-gradient(90deg,var(--accent-cyan),var(--accent-purple));
+  border-radius:2px; transition:width 0.6s ease;
+}
+.animated-underline.visible::after { width:100%; }
+
+/* Image upload preview */
+.upload-preview { max-height:200px; object-fit:contain; border-radius:8px; }
+
+/* Loading spinner */
+.app-loading {
+  display:flex; align-items:center; justify-content:center;
+  min-height:200px;
+}
+.app-loading-spinner {
+  width:32px; height:32px; border:3px solid rgba(0,212,255,0.2);
+  border-top-color:#00d4ff; border-radius:50%;
+  animation:spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+</style>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        primary: '#00d4ff',
+        secondary: '#7c3aed',
+        emerald: '#10b981',
+        bgprimary: '#080c14',
+        bgsecondary: '#0d1b2e',
+        textprimary: '#f0f4ff',
+        textmuted: '#7a8ba0',
+      },
+      fontFamily: {
+        orbitron: ['Orbitron','sans-serif'],
+        inter: ['Inter','sans-serif'],
+        mono: ['JetBrains Mono','monospace'],
+      }
+    }
+  }
+}
+</script>
+</head>
+<body data-id="0" class="bg-bgprimary text-textprimary font-inter">
+<app-icon data-id="1" hidden data-icon="box" data-palette="Blue"></app-icon>
+
+<!-- ==================== ANIMATED BACKGROUND ==================== -->
+<div data-id="2" id="animated-bg">
+  <div data-id="3" class="bg-orb bg-orb-1"></div>
+  <div data-id="4" class="bg-orb bg-orb-2"></div>
+  <div data-id="5" class="bg-orb bg-orb-3"></div>
+  <div data-id="6" class="dot-grid"></div>
+  <div data-id="7" class="print-line" style="--duration:8s;--max-opacity:0.25;animation-delay:0s"></div>
+  <div data-id="8" class="print-line" style="--duration:12s;--max-opacity:0.15;animation-delay:1s"></div>
+  <div data-id="9" class="print-line" style="--duration:10s;--max-opacity:0.2;animation-delay:2.5s"></div>
+  <div data-id="10" class="print-line" style="--duration:15s;--max-opacity:0.12;animation-delay:4s"></div>
+  <div data-id="11" class="print-line" style="--duration:9s;--max-opacity:0.22;animation-delay:5.5s"></div>
+  <div data-id="12" class="print-line" style="--duration:14s;--max-opacity:0.1;animation-delay:3s"></div>
+  <div data-id="13" class="print-line" style="--duration:11s;--max-opacity:0.18;animation-delay:6s"></div>
+  <div data-id="14" class="print-line" style="--duration:13s;--max-opacity:0.14;animation-delay:7.5s"></div>
+  <div data-id="15" class="print-line" style="--duration:16s;--max-opacity:0.1;animation-delay:1.5s"></div>
+  <div data-id="16" class="print-line" style="--duration:10s;--max-opacity:0.2;animation-delay:9s"></div>
+</div>
+
+<!-- ==================== NAVBAR ==================== -->
+<nav data-id="17" id="navbar-main" class="fixed top-0 left-0 right-0 z-[100] px-4 md:px-8 py-3 flex items-center justify-between bg-transparent">
+  <a data-id="18" id="logo-link-a1b2" class="flex items-center gap-2 cursor-pointer no-underline">
+    <svg data-id="19" width="32" height="32" viewBox="0 0 32 32" fill="none">
+      <rect data-id="20" x="8" y="20" width="16" height="3" rx="1" fill="rgba(0,212,255,0.3)" stroke="#00d4ff" stroke-width="0.8"/>
+      <rect data-id="21" x="9" y="16" width="14" height="3" rx="1" fill="rgba(0,212,255,0.25)" stroke="#00d4ff" stroke-width="0.8"/>
+      <rect data-id="22" x="10" y="12" width="12" height="3" rx="1" fill="rgba(0,212,255,0.2)" stroke="#00d4ff" stroke-width="0.8"/>
+      <rect data-id="23" x="11" y="8" width="10" height="3" rx="1" fill="rgba(0,212,255,0.15)" stroke="#00d4ff" stroke-width="0.8"/>
+      <line data-id="24" x1="16" y1="2" x2="16" y2="8" stroke="#00d4ff" stroke-width="1.5" stroke-linecap="round"/>
+      <circle data-id="25" cx="16" cy="2" r="2" fill="#00d4ff" opacity="0.8"/>
+      <line data-id="26" x1="6" y1="24" x2="26" y2="24" stroke="#00d4ff" stroke-width="0.5" opacity="0.4"/>
+      <rect data-id="27" x="6" y="24" width="20" height="6" rx="1" fill="none" stroke="rgba(0,212,255,0.3)" stroke-width="0.8"/>
+    </svg>
+    <span data-id="28" class="font-orbitron text-sm md:text-base font-bold text-primary cyan-glow tracking-wider">TomKim3dprints</span>
+  </a>
+
+  <!-- Desktop Nav -->
+  <div data-id="29" class="hidden md:flex items-center gap-6">
+    <a data-id="30" data-nav="home" class="nav-link text-sm font-medium text-textmuted hover:text-primary transition cursor-pointer">Home</a>
+    <a data-id="31" data-nav="portfolio" class="nav-link text-sm font-medium text-textmuted hover:text-primary transition cursor-pointer">Portfolio</a>
+    <a data-id="32" data-nav="about" class="nav-link text-sm font-medium text-textmuted hover:text-primary transition cursor-pointer">About</a>
+    <a data-id="33" data-nav="contact" class="nav-link text-sm font-medium text-textmuted hover:text-primary transition cursor-pointer">Contact</a>
+    <div data-id="34" id="edit-toggle-label-x9k2" class="flex items-center gap-1.5 text-xs text-textmuted cursor-pointer select-none" title="Toggle edit mode">
+      <input data-id="35" type="checkbox" id="edit-mode-toggle-r3f4" class="w-3.5 h-3.5 accent-primary"/>
+      <span data-id="36" id="edit-toggle-text-r3f4">Edit</span>
+    </div>
+    <button data-id="37" id="add-item-btn-n7m8" class="flex items-center gap-1.5 px-4 py-2 rounded-full border border-primary text-primary text-sm font-semibold hover:bg-primary/10 hover:shadow-[0_0_20px_rgba(0,212,255,0.3)] transition btn-pulse">
+      <i data-id="38" data-lucide="plus" class="w-4 h-4"></i> Add Item
+    </button>
+  </div>
+
+  <!-- Mobile menu button -->
+  <button data-id="39" id="mobile-menu-btn-q5w6" class="md:hidden p-2 text-textmuted hover:text-primary transition">
+    <i data-id="40" data-lucide="menu" class="w-6 h-6"></i>
+  </button>
+</nav>
+
+<!-- Mobile Menu Overlay -->
+<div data-id="41" id="mobile-menu-overlay" class="fixed inset-0 z-[150] bg-bgprimary/98 backdrop-blur-xl flex flex-col p-6 md:hidden">
+  <div data-id="42" class="flex justify-between items-center mb-12">
+    <span data-id="43" class="font-orbitron text-base font-bold text-primary cyan-glow">TomKim3dprints</span>
+    <button data-id="44" id="mobile-menu-close-e1r2" class="p-2 text-textmuted hover:text-primary transition">
+      <i data-id="45" data-lucide="x" class="w-6 h-6"></i>
+    </button>
+  </div>
+  <div data-id="46" class="flex flex-col gap-6">
+    <a data-id="47" data-nav="home" class="mobile-nav-link text-2xl font-orbitron text-textmuted hover:text-primary transition cursor-pointer">Home</a>
+    <a data-id="48" data-nav="portfolio" class="mobile-nav-link text-2xl font-orbitron text-textmuted hover:text-primary transition cursor-pointer">Portfolio</a>
+    <a data-id="49" data-nav="about" class="mobile-nav-link text-2xl font-orbitron text-textmuted hover:text-primary transition cursor-pointer">About</a>
+    <a data-id="50" data-nav="contact" class="mobile-nav-link text-2xl font-orbitron text-textmuted hover:text-primary transition cursor-pointer">Contact</a>
+    <div data-id="51" class="flex items-center gap-3 mt-4">
+      <div data-id="52" class="flex items-center gap-2 text-sm text-textmuted cursor-pointer">
+        <input data-id="53" type="checkbox" id="edit-mode-toggle-mobile-u8i9" class="w-4 h-4 accent-primary"/>
+        <span data-id="54" id="edit-toggle-text-mobile-u8i9">Edit Mode</span>
+      </div>
+    </div>
+    <button data-id="55" id="add-item-btn-mobile-p3o4" class="flex items-center justify-center gap-2 mt-4 px-6 py-3 rounded-full border border-primary text-primary font-semibold hover:bg-primary/10 transition">
+      <i data-id="56" data-lucide="plus" class="w-5 h-5"></i> Add Item
+    </button>
+  </div>
+</div>
+
+<!-- ==================== TOAST ==================== -->
+<div data-id="57" id="toast-container-j2k3" class="fixed top-20 right-4 z-[200]">
+  <div data-id="58" id="toast-msg-l4m5" class="toast glass-card px-5 py-3 flex items-center gap-3 text-sm">
+    <i data-id="59" data-lucide="check-circle" class="w-5 h-5 text-emerald"></i>
+    <span data-id="60" id="toast-text-n6o7">Success!</span>
+  </div>
+</div>
+
+<!-- ==================== MAIN CONTENT CONTAINER ==================== -->
+<main data-id="61" id="app-content-z9a1" class="relative z-10 pt-16 min-h-screen">
+
+<!-- ========== HOME PAGE ========== -->
+<div data-id="62" id="page-home" class="page-section">
+
+  <!-- Hero -->
+  <section data-id="63" id="hero-section-b2c3" class="min-h-screen flex flex-col items-center justify-center px-4 md:px-8 relative overflow-hidden">
+    <div data-id="64" class="max-w-6xl w-full flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12">
+      <div data-id="65" class="flex-1 text-center md:text-left">
+        <h1 data-id="66" id="hero-headline-d4e5" class="font-orbitron text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight mb-6">
+          <span data-id="67" class="hero-word block text-primary cyan-glow" style="animation-delay:0.1s">Precision Printed.</span>
+          <span data-id="68" class="hero-word block text-textprimary mt-2" style="animation-delay:0.5s">Passionately Crafted.</span>
+        </h1>
+        <p data-id="69" id="hero-sub-f6g7" class="text-textmuted text-base md:text-lg max-w-lg mx-auto md:mx-0 mb-8 hero-word" style="animation-delay:0.9s">
+          Custom 3D printed designs, from concept to creation. Based in Florida.
+        </p>
+        <div data-id="70" class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start hero-word" style="animation-delay:1.2s">
+          <button data-id="71" id="cta-portfolio-h8i9" class="px-8 py-3.5 rounded-full bg-primary text-bgprimary font-bold text-sm hover:shadow-[0_0_30px_rgba(0,212,255,0.4)] transition btn-pulse">
+            View Portfolio
+          </button>
+          <button data-id="72" id="cta-quote-j1k2" class="px-8 py-3.5 rounded-full border-2 border-secondary text-secondary font-bold text-sm hover:bg-secondary hover:text-white transition">
+            Get a Quote
+          </button>
+        </div>
+      </div>
+      <div data-id="73" class="flex-shrink-0 hidden md:flex items-center justify-center hero-word" style="animation-delay:1.5s">
+        <div data-id="74" class="cube-container">
+          <div data-id="75" class="cube">
+            <div data-id="76" class="cube-face front"></div>
+            <div data-id="77" class="cube-face back"></div>
+            <div data-id="78" class="cube-face right"></div>
+            <div data-id="79" class="cube-face left"></div>
+            <div data-id="80" class="cube-face top"></div>
+            <div data-id="81" class="cube-face bottom"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div data-id="82" class="absolute bottom-8 left-1/2 -translate-x-1/2 scroll-indicator text-textmuted">
+      <i data-id="83" data-lucide="chevron-down" class="w-6 h-6"></i>
+    </div>
+  </section>
+
+  <!-- Stats Bar -->
+  <section data-id="84" id="stats-section-l3m4" class="py-16 px-4 md:px-8">
+    <div data-id="85" class="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-6">
+      <div data-id="86" class="glass-card p-6 text-center">
+        <div data-id="87" class="text-3xl md:text-4xl font-orbitron font-bold text-primary mb-2">
+          <span data-id="88" class="count-up" data-target="100">0</span>+
+        </div>
+        <p data-id="89" class="text-textmuted text-sm">Prints Completed</p>
+      </div>
+      <div data-id="90" class="glass-card p-6 text-center">
+        <div data-id="91" class="text-3xl md:text-4xl font-orbitron font-bold text-secondary mb-2">
+          <span data-id="92" class="count-up" data-target="10">0</span>+
+        </div>
+        <p data-id="93" class="text-textmuted text-sm">Materials Used</p>
+      </div>
+      <div data-id="94" class="glass-card p-6 text-center">
+        <div data-id="95" class="text-3xl md:text-4xl font-orbitron font-bold text-emerald mb-2">
+          <span data-id="96" class="count-up" data-target="5">0</span>★
+        </div>
+        <p data-id="97" class="text-textmuted text-sm">Customer Rating</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Works -->
+  <section data-id="98" id="featured-section-n5o6" class="py-16 px-4 md:px-8">
+    <div data-id="99" class="max-w-6xl mx-auto">
+      <h2 data-id="100" class="font-orbitron text-2xl md:text-3xl font-bold text-center mb-3">Featured Prints</h2>
+      <p data-id="101" class="text-textmuted text-center mb-12 text-sm">Handpicked highlights from my portfolio</p>
+      <div data-id="102" id="featured-grid-p7q8" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section data-id="103" id="services-section-r9s1" class="py-16 px-4 md:px-8">
+    <div data-id="104" class="max-w-5xl mx-auto">
+      <h2 data-id="105" class="font-orbitron text-2xl md:text-3xl font-bold text-center mb-3">What I Offer</h2>
+      <p data-id="106" class="text-textmuted text-center mb-12 text-sm">End-to-end 3D printing services for every need</p>
+      <div data-id="107" class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div data-id="108" class="glass-card gradient-border p-6 md:p-8">
+          <div data-id="109" class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
+            <svg data-id="110" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path data-id="111" d="M3 21h18"/><path data-id="112" d="M5 21V7l7-4 7 4v14"/><rect data-id="113" x="9" y="13" width="6" height="8" rx="1"/><path data-id="114" d="M10 9h4"/></svg>
+          </div>
+          <h3 data-id="115" class="font-orbitron text-lg font-semibold mb-2">Custom Designs</h3>
+          <p data-id="116" class="text-textmuted text-sm leading-relaxed">Bring your ideas to life with fully custom 3D models tailored to your exact specifications.</p>
+        </div>
+        <div data-id="117" class="glass-card gradient-border p-6 md:p-8">
+          <div data-id="118" class="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center mb-4">
+            <svg data-id="119" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path data-id="120" d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          </div>
+          <h3 data-id="121" class="font-orbitron text-lg font-semibold mb-2">Rapid Prototyping</h3>
+          <p data-id="122" class="text-textmuted text-sm leading-relaxed">Fast turnaround from concept to physical prototype — get your designs in hand quickly.</p>
+        </div>
+        <div data-id="123" class="glass-card gradient-border p-6 md:p-8">
+          <div data-id="124" class="w-12 h-12 rounded-xl bg-emerald/10 flex items-center justify-center mb-4">
+            <svg data-id="125" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect data-id="126" x="4" y="4" width="16" height="4" rx="1"/><rect data-id="127" x="5" y="10" width="14" height="4" rx="1"/><rect data-id="128" x="6" y="16" width="12" height="4" rx="1"/></svg>
+          </div>
+          <h3 data-id="129" class="font-orbitron text-lg font-semibold mb-2">Production Runs</h3>
+          <p data-id="130" class="text-textmuted text-sm leading-relaxed">Consistent quality for small batch production. Perfect for product launches and events.</p>
+        </div>
+        <div data-id="131" class="glass-card gradient-border p-6 md:p-8">
+          <div data-id="132" class="w-12 h-12 rounded-xl bg-yellow-500/10 flex items-center justify-center mb-4">
+            <svg data-id="133" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path data-id="134" d="M18.37 2.63a1 1 0 0 1 1 1v2.74a1 1 0 0 1-.3.7L12 14.14l-2.12-2.12L16.94 5a1 1 0 0 1 .7-.3h2.74"/><path data-id="135" d="M2 21l7-3-4-4-3 7z"/><path data-id="136" d="M9.91 14.12A6 6 0 1 1 14.12 9.9"/></svg>
+          </div>
+          <h3 data-id="137" class="font-orbitron text-lg font-semibold mb-2">Finishing & Painting</h3>
+          <p data-id="138" class="text-textmuted text-sm leading-relaxed">Professional post-processing and custom finishes to make your prints truly stand out.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section data-id="139" id="testimonials-section-t2u3" class="py-16 px-4 md:px-8 overflow-hidden">
+    <div data-id="140" class="max-w-6xl mx-auto">
+      <h2 data-id="141" class="font-orbitron text-2xl md:text-3xl font-bold text-center mb-3">What Customers Say</h2>
+      <p data-id="142" class="text-textmuted text-center mb-12 text-sm">Real feedback from real clients</p>
+      <div data-id="143" class="overflow-hidden">
+        <div data-id="144" class="testimonial-track">
+          <div data-id="145" class="glass-card p-6 md:p-8 min-w-[300px] md:min-w-[380px] flex-shrink-0">
+            <div data-id="146" class="flex gap-1 mb-4">
+              <svg data-id="147" width="16" height="16" fill="#f59e0b" viewBox="0 0 20 20"><path data-id="148" d="M10 1l2.39 4.84L18 6.73l-4 3.9.94 5.5L10 13.47l-4.94 2.66L6 10.63l-4-3.9 5.61-.89z"/></svg>
+              <svg data-id="149" width="16" height="16" fill="#f59e0b" viewBox="0 0 20 20"><path data-id="150" d="M10 1l2.39 4.84L18 6.73l-4 3.9.94 5.5L10 13.47l-4.94 2.66L6 10.63l-4-3.9 5.61-.89z"/></svg>
+              <svg data-id="151" width="16" height="16" fill="#f59e0b" viewBox="0 0 20 20"><path data-id="152" d="M10 1l2.39 4.84L18 6.73l-4 3.9.94 5.5L10 13.47l-4.94 2.66L6 10.63l-4-3.9 5.61-.89z"/></svg>
+              <svg data-id="153" width="16" height="16" fill="#f59e0b" viewBox="0 0 20 20"><path data-id="154" d="M10 1l2.39 4.84L18 6.73l-4 3.9.94 5.5L10 13.47l-4.94 2.66L6 10.63l-4-3.9 5.61-.89z"/></svg>
+              <svg data-id="155" width="16" height="16" fill="#f59e0b" viewBox="0 0 20 20"><path data-id="156" d="M10 1l2.39 4.84L18 6.73l-4 3.9.94 5.5L10 13.47l-4.94 2.66L6 10.63l-4-3.9 5.61-.89z"/></svg>
+            </div>
+            <p data-id="157" class="text-textprimary text-sm leading-relaxed mb-4">"Tom's prints are incredible — sharp details, fast shipping. My miniatures arrived perfect!"</p>
+            <p data-id="158" class="text-textmuted text-xs font-mono">— Sarah K.</p>
+          </div>
+          <div data-id="159" class="glass-card p-6 md:p-8 min-w-[300px] md:min-w-[380px] flex-shrink-0">
+            <div data-id="160" class="flex gap-1 mb-4">
+              <svg data-id="161" width="16" height="16" fill="#f59e0b" viewBox="0 0 20 20"><path data-id="162" d="M10 1l2.39 4.84L18 6.73l-4 3.9.94 5.5L10 13.47l-4.94 2.66L6 10.63l-4-3.9 5.61-.89z"/></svg>
+              <svg data-id="163" width="16" height="16" fill="#f59e0b" viewBox="0 0 20 20"><path data-id="164" d="M10 1l2.39 4.84L18 6.73l-4 3.9.94 5.5L10 13.47l-4.94 2.66L6 10.63l-4-3.9 5.61-.89z"/></svg>
+              <svg data-id="165" width="16" height="16" fill="#f59e0b" viewBox="0 0 20 20"><path data-id="166" d="M10 1l2.39 4.84L18 6.73l-4 3.9.94 5.5L10 13.47l-4.94 2.66L6 10.63l-4-3.9 5.61-.89z"/></svg>
+              <svg data-id="167" width="16" height="16" fill="#f59e0b" viewBox="0 0 20 20"><path data-id="168" d="M10 1l2.39 4.84L18 6.73l-4 3.9.94 5.5L10 13.47l-4.94 2.66L6 10.63l-4-3.9 5.61-.89z"/></svg>
+              <svg data-id="169" width="16" height="16" fill="#f59e0b" viewBox="0 0 20 20"><path data-id="170" d="M10 1l2.39 4.84L18 6.73l-4 3.9.94 5.5L10 13.47l-4.94 2.66L6 10.63l-4-3.9 5.61-.89z"/></svg>
+            </div>
+            <p data-id="171" class="text-textprimary text-sm leading-relaxed mb-4">"Ordered a custom prototype and it was done in 2 days. Outstanding quality and communication."</p>
+            <p data-id="172" class="text-textmuted text-xs font-mono">— Marcus R.</p>
+          </div>
+          <div data-id="173" class="glass-card p-6 md:p-8 min-w-[300px] md:min-w-[380px] flex-shrink-0">
+            <div data-id="174" class="flex gap-1 mb-4">
+              <svg data-id="175" width="16" height="16" fill="#f59e0b" viewBox="0 0 20 20"><path data-id="176" d="M10 1l2.39 4.84L18 6.73l-4 3.9.94 5.5L10 13.47l-4.94 2.66L6 10.63l-4-3.9 5.61-.89z"/></svg>
+              <svg data-id="177" width="16" height="16" fill="#f59e0b" viewBox="0 0 20 20"><path data-id="178" d="M10 1l2.39 4.84L18 6.73l-4 3.9.94 5.5L10 13.47l-4.94 2.66L6 10.63l-4-3.9 5.61-.89z"/></svg>
+              <svg data-id="179" width="16" height="16" fill="#f59e0b" viewBox="0 0 20 20"><path data-id="180" d="M10 1l2.39 4.84L18 6.73l-4 3.9.94 5.5L10 13.47l-4.94 2.66L6 10.63l-4-3.9 5.61-.89z"/></svg>
+              <svg data-id="181" width="16" height="16" fill="#f59e0b" viewBox="0 0 20 20"><path data-id="182" d="M10 1l2.39 4.84L18 6.73l-4 3.9.94 5.5L10 13.47l-4.94 2.66L6 10.63l-4-3.9 5.61-.89z"/></svg>
+              <svg data-id="183" width="16" height="16" fill="#f59e0b" viewBox="0 0 20 20"><path data-id="184" d="M10 1l2.39 4.84L18 6.73l-4 3.9.94 5.5L10 13.47l-4.94 2.66L6 10.63l-4-3.9 5.61-.89z"/></svg>
+            </div>
+            <p data-id="185" class="text-textprimary text-sm leading-relaxed mb-4">"Best 3D printing service I've found online. The finish quality is unreal."</p>
+            <p data-id="186" class="text-textmuted text-xs font-mono">— Jordan T.</p>
+          </div>
+          <!-- Duplicate for infinite scroll -->
+          <div data-id="187" class="glass-card p-6 md:p-8 min-w-[300px] md:min-w-[380px] flex-shrink-0">
+            <div data-id="188" class="flex gap-1 mb-4">
+              <svg data-id="189" width="16" height="16" fill="#f59e0b" viewBox="0 0 20 20"><path data-id="190" d="M10 1l2.39 4.84L18 6.73l-4 3.9.94 5.5L10 13.47l-4.94 2.66L6 10.63l-4-3.9 5.61-.89z"/></svg>
+              <svg data-id="191" width="16" height="16" fill="#f59e0b" viewBox="0 0 20 20"><path data-id="192" d="M10 1l2.39 4.84L18 6.73l-4 3.9.94 5.5L10 13.47l-4.94 2.66L6 10.63l-4-3.9 5.61-.89z"/></svg>
+              <svg data-id="193" width="16" height="16" fill="#f59e0b" viewBox="0 0 20 20"><path data-id="194" d="M10 1l2.39 4.84L18 6.73l-4 3.9.94 5.5L10 13.47l-4.94 2.66L6 10.63l-4-3.9 5.61-.89z"/></svg>
+              <svg data-id="195" width="16" height="16" fill="#f59e0b" viewBox="0 0 20 20"><path data-id="196" d="M10 1l2.39 4.84L18 6.73l-4 3.9.94 5.5L10 13.47l-4.94 2.66L6 10.63l-4-3.9 5.61-.89z"/></svg>
+              <svg data-id="197" width="16" height="16" fill="#f59e0b" viewBox="0 0 20 20"><path data-id="198" d="M10 1l2.39 4.84L18 6.73l-4 3.9.94 5.5L10 13.47l-4.94 2.66L6 10.63l-4-3.9 5.61-.89z"/></svg>
+            </div>
+            <p data-id="199" class="text-textprimary text-sm leading-relaxed mb-4">"Tom's prints are incredible — sharp details, fast shipping. My miniatures arrived perfect!"</p>
+            <p data-id="200" class="text-textmuted text-xs font-mono">— Sarah K.</p>
+          </div>
+          <div data-id="201" class="glass-card p-6 md:p-8 min-w-[300px] md:min-w-[380px] flex-shrink-0">
+            <div data-id="202" class="flex gap-1 mb-4">
+              <svg data-id="203" width="16" height="16" fill="#f59e0b" viewBox="0 0 20 20"><path data-id="204" d="M10 1l2.39 4.84L18 6.73l-4 3.9.94 5.5L10 13.47l-4.94 2.66L6 10.63l-4-3.9 5.61-.89z"/></svg>
+              <svg data-id="205" width="16" height="16" fill="#f59e0b" viewBox="0 0 20 20"><path data-id="206" d="M10 1l2.39 4.84L18 6.73l-4 3.9.94 5.5L10 13.47l-4.94 2.66L6 10.63l-4-3.9 5.61-.89z"/></svg>
+              <svg data-id="207" width="16" height="16" fill="#f59e0b" viewBox="0 0 20 20"><path data-id="208" d="M10 1l2.39 4.84L18 6.73l-4 3.9.94 5.5L10 13.47l-4.94 2.66L6 10.63l-4-3.9 5.61-.89z"/></svg>
+              <svg data-id="209" width="16" height="16" fill="#f59e0b" viewBox="0 0 20 20"><path data-id="210" d="M10 1l2.39 4.84L18 6.73l-4 3.9.94 5.5L10 13.47l-4.94 2.66L6 10.63l-4-3.9 5.61-.89z"/></svg>
+              <svg data-id="211" width="16" height="16" fill="#f59e0b" viewBox="0 0 20 20"><path data-id="212" d="M10 1l2.39 4.84L18 6.73l-4 3.9.94 5.5L10 13.47l-4.94 2.66L6 10.63l-4-3.9 5.61-.89z"/></svg>
+            </div>
+            <p data-id="213" class="text-textprimary text-sm leading-relaxed mb-4">"Ordered a custom prototype and it was done in 2 days. Outstanding quality and communication."</p>
+            <p data-id="214" class="text-textmuted text-xs font-mono">— Marcus R.</p>
+          </div>
+          <div data-id="215" class="glass-card p-6 md:p-8 min-w-[300px] md:min-w-[380px] flex-shrink-0">
+            <div data-id="216" class="flex gap-1 mb-4">
+              <svg data-id="217" width="16" height="16" fill="#f59e0b" viewBox="0 0 20 20"><path data-id="218" d="M10 1l2.39 4.84L18 6.73l-4 3.9.94 5.5L10 13.47l-4.94 2.66L6 10.63l-4-3.9 5.61-.89z"/></svg>
+              <svg data-id="219" width="16" height="16" fill="#f59e0b" viewBox="0 0 20 20"><path data-id="220" d="M10 1l2.39 4.84L18 6.73l-4 3.9.94 5.5L10 13.47l-4.94 2.66L6 10.63l-4-3.9 5.61-.89z"/></svg>
+              <svg data-id="221" width="16" height="16" fill="#f59e0b" viewBox="0 0 20 20"><path data-id="222" d="M10 1l2.39 4.84L18 6.73l-4 3.9.94 5.5L10 13.47l-4.94 2.66L6 10.63l-4-3.9 5.61-.89z"/></svg>
+              <svg data-id="223" width="16" height="16" fill="#f59e0b" viewBox="0 0 20 20"><path data-id="224" d="M10 1l2.39 4.84L18 6.73l-4 3.9.94 5.5L10 13.47l-4.94 2.66L6 10.63l-4-3.9 5.61-.89z"/></svg>
+              <svg data-id="225" width="16" height="16" fill="#f59e0b" viewBox="0 0 20 20"><path data-id="226" d="M10 1l2.39 4.84L18 6.73l-4 3.9.94 5.5L10 13.47l-4.94 2.66L6 10.63l-4-3.9 5.61-.89z"/></svg>
+            </div>
+            <p data-id="227" class="text-textprimary text-sm leading-relaxed mb-4">"Best 3D printing service I've found online. The finish quality is unreal."</p>
+            <p data-id="228" class="text-textmuted text-xs font-mono">— Jordan T.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <section data-id="229" id="cta-section-v4w5" class="py-16 px-4 md:px-8">
+    <div data-id="230" class="max-w-4xl mx-auto cta-gradient rounded-2xl p-8 md:p-12 text-center">
+      <h2 data-id="231" class="font-orbitron text-xl md:text-3xl font-bold mb-4">Ready to bring your idea to life?</h2>
+      <p data-id="232" class="text-textmuted text-sm mb-8">Let's turn your concept into a tangible creation.</p>
+      <button data-id="233" id="cta-contact-x6y7" class="px-8 py-3.5 rounded-full bg-primary text-bgprimary font-bold text-sm hover:shadow-[0_0_30px_rgba(0,212,255,0.4)] transition btn-pulse">
+        Contact Me
+      </button>
+    </div>
+  </section>
+</div>
+
+<!-- ========== PORTFOLIO PAGE ========== -->
+<div data-id="234" id="page-portfolio" class="page-section" style="display:none">
+  <section data-id="235" class="pt-20 pb-8 px-4 md:px-8">
+    <div data-id="236" class="max-w-6xl mx-auto text-center">
+      <h1 data-id="237" class="font-orbitron text-3xl md:text-4xl font-bold mb-3">
+        <span data-id="238" class="animated-underline" id="portfolio-title-a1b2">My Portfolio</span>
+      </h1>
+      <p data-id="239" class="text-textmuted text-sm md:text-base">Browse my collection of custom 3D printed creations</p>
+    </div>
+  </section>
+
+  <!-- Filter Bar -->
+  <section data-id="240" class="py-6 px-4 md:px-8">
+    <div data-id="241" class="max-w-6xl mx-auto flex flex-wrap gap-3 justify-center">
+      <button data-id="242" class="filter-pill active" data-filter="all">All</button>
+      <button data-id="243" class="filter-pill" data-filter="Miniatures">Miniatures</button>
+      <button data-id="244" class="filter-pill" data-filter="Functional Parts">Functional Parts</button>
+      <button data-id="245" class="filter-pill" data-filter="Art & Decor">Art & Decor</button>
+      <button data-id="246" class="filter-pill" data-filter="Prototypes">Prototypes</button>
+      <button data-id="247" class="filter-pill" data-filter="Custom Orders">Custom Orders</button>
+    </div>
+  </section>
+
+  <!-- Portfolio Grid -->
+  <section data-id="248" class="py-8 px-4 md:px-8 pb-20">
+    <div data-id="249" id="portfolio-grid-c3d4" class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Populated by JS -->
+    </div>
+    <div data-id="250" id="portfolio-empty-e5f6" class="hidden max-w-md mx-auto text-center py-20">
+      <svg data-id="251" width="120" height="120" viewBox="0 0 120 120" fill="none" class="mx-auto mb-6">
+        <rect data-id="252" x="30" y="70" width="60" height="8" rx="2" fill="rgba(0,212,255,0.15)" stroke="#00d4ff" stroke-width="1"/>
+        <rect data-id="253" x="33" y="60" width="54" height="8" rx="2" fill="rgba(0,212,255,0.12)" stroke="#00d4ff" stroke-width="1"/>
+        <rect data-id="254" x="36" y="50" width="48" height="8" rx="2" fill="rgba(0,212,255,0.09)" stroke="#00d4ff" stroke-width="1"/>
+        <rect data-id="255" x="39" y="40" width="42" height="8" rx="2" fill="rgba(0,212,255,0.06)" stroke="#00d4ff" stroke-width="1"/>
+        <line data-id="256" x1="60" y1="20" x2="60" y2="40" stroke="#00d4ff" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 3">
+          <animate data-id="257" attributeName="stroke-dashoffset" values="0;7" dur="1s" repeatCount="indefinite"/>
+        </line>
+        <circle data-id="258" cx="60" cy="18" r="4" fill="#00d4ff" opacity="0.7">
+          <animate data-id="259" attributeName="opacity" values="0.7;1;0.7" dur="1.5s" repeatCount="indefinite"/>
+        </circle>
+        <rect data-id="260" x="25" y="80" width="70" height="15" rx="2" fill="none" stroke="rgba(0,212,255,0.3)" stroke-width="1"/>
+      </svg>
+      <p data-id="261" class="text-textmuted text-sm mb-2">No prints added yet.</p>
+      <p data-id="262" class="text-textmuted text-xs">Click <span data-id="263" class="text-primary font-semibold">"+ Add Item"</span> to showcase your work!</p>
+    </div>
+  </section>
+</div>
+
+<!-- ========== ABOUT PAGE ========== -->
+<div data-id="264" id="page-about" class="page-section" style="display:none">
+  <!-- Hero Banner -->
+  <section data-id="265" class="pt-20 pb-12 px-4 md:px-8 relative overflow-hidden">
+    <div data-id="266" class="absolute inset-0 bg-gradient-to-r from-primary/5 to-secondary/5"></div>
+    <div data-id="267" class="max-w-6xl mx-auto text-center relative z-10">
+      <h1 data-id="268" class="font-orbitron text-3xl md:text-4xl font-bold mb-3">About TomKim3dprints</h1>
+      <p data-id="269" class="text-textmuted text-base">Maker. Creator. Innovator.</p>
+    </div>
+  </section>
+
+  <!-- About Story -->
+  <section data-id="270" class="py-16 px-4 md:px-8">
+    <div data-id="271" class="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12">
+      <!-- SVG 3D Printer Illustration -->
+      <div data-id="272" class="flex-shrink-0 w-full md:w-[360px]">
+        <svg data-id="273" viewBox="0 0 360 380" fill="none" class="w-full max-w-[360px] mx-auto">
+          <!-- Printer frame -->
+          <rect data-id="274" x="60" y="60" width="240" height="260" rx="8" fill="rgba(0,212,255,0.03)" stroke="rgba(0,212,255,0.2)" stroke-width="1.5"/>
+          <!-- Build plate -->
+          <rect data-id="275" x="90" y="270" width="180" height="12" rx="3" fill="rgba(0,212,255,0.1)" stroke="#00d4ff" stroke-width="1"/>
+          <!-- Print layers building up -->
+          <rect data-id="276" x="120" y="250" width="120" height="10" rx="2" fill="rgba(0,212,255,0.18)" stroke="#00d4ff" stroke-width="0.8">
+            <animate data-id="277" attributeName="opacity" values="0.5;1;0.5" dur="3s" repeatCount="indefinite"/>
+          </rect>
+          <rect data-id="278" x="125" y="238" width="110" height="10" rx="2" fill="rgba(0,212,255,0.15)" stroke="#00d4ff" stroke-width="0.8">
+            <animate data-id="279" attributeName="opacity" values="0.5;1;0.5" dur="3s" begin="0.3s" repeatCount="indefinite"/>
+          </rect>
+          <rect data-id="280" x="130" y="226" width="100" height="10" rx="2" fill="rgba(0,212,255,0.12)" stroke="#00d4ff" stroke-width="0.8">
+            <animate data-id="281" attributeName="opacity" values="0.5;1;0.5" dur="3s" begin="0.6s" repeatCount="indefinite"/>
+          </rect>
+          <rect data-id="282" x="135" y="214" width="90" height="10" rx="2" fill="rgba(0,212,255,0.09)" stroke="#00d4ff" stroke-width="0.8">
+            <animate data-id="283" attributeName="opacity" values="0.5;1;0.5" dur="3s" begin="0.9s" repeatCount="indefinite"/>
+          </rect>
+          <rect data-id="284" x="140" y="202" width="80" height="10" rx="2" fill="rgba(0,212,255,0.06)" stroke="#00d4ff" stroke-width="0.8">
+            <animate data-id="285" attributeName="opacity" values="0.5;1;0.5" dur="3s" begin="1.2s" repeatCount="indefinite"/>
+          </rect>
+          <!-- Nozzle/gantry -->
+          <line data-id="286" x1="80" y1="190" x2="280" y2="190" stroke="rgba(124,58,237,0.4)" stroke-width="2"/>
+          <rect data-id="287" x="168" y="180" width="24" height="18" rx="3" fill="rgba(124,58,237,0.2)" stroke="#7c3aed" stroke-width="1"/>
+          <!-- Filament from nozzle -->
+          <line data-id="288" x1="180" y1="198" x2="180" y2="202" stroke="#00d4ff" stroke-width="2" stroke-linecap="round">
+            <animate data-id="289" attributeName="opacity" values="1;0.3;1" dur="0.8s" repeatCount="indefinite"/>
+          </line>
+          <!-- Vertical rails -->
+          <line data-id="290" x1="80" y1="60" x2="80" y2="320" stroke="rgba(0,212,255,0.15)" stroke-width="2"/>
+          <line data-id="291" x1="280" y1="60" x2="280" y2="320" stroke="rgba(0,212,255,0.15)" stroke-width="2"/>
+          <!-- Spool -->
+          <circle data-id="292" cx="300" cy="90" r="20" fill="none" stroke="rgba(0,212,255,0.2)" stroke-width="1.5"/>
+          <circle data-id="293" cx="300" cy="90" r="8" fill="none" stroke="rgba(0,212,255,0.15)" stroke-width="1"/>
+          <path data-id="294" d="M300 110 Q290 150 280 180" stroke="rgba(0,212,255,0.2)" stroke-width="1" fill="none"/>
+          <!-- Screen -->
+          <rect data-id="295" x="100" y="75" width="60" height="30" rx="4" fill="rgba(0,212,255,0.08)" stroke="#00d4ff" stroke-width="0.8"/>
+          <text data-id="296" x="115" y="94" fill="#00d4ff" font-size="8" font-family="JetBrains Mono, monospace" opacity="0.7">42%</text>
+        </svg>
+      </div>
+      <!-- Text -->
+      <div data-id="297" class="flex-1">
+        <h2 data-id="298" class="font-orbitron text-2xl md:text-3xl font-bold mb-6">Hi, I'm Tom</h2>
+        <p data-id="299" class="text-textmuted text-sm md:text-base leading-relaxed mb-4">
+          Welcome to TomKim3dprints — a passion project turned small business. I've been 3D printing for years, turning digital designs into physical reality. From intricate miniatures to functional mechanical parts, I love the challenge of every new print.
+        </p>
+        <p data-id="300" class="text-textmuted text-sm md:text-base leading-relaxed mb-6">
+          Based out of Medulla, Florida, I ship nationwide and offer custom design services for clients who want something truly unique. Whether it's a one-off art piece or a batch of production parts, I bring the same attention to detail to every job.
+        </p>
+        <button data-id="301" id="about-contact-btn-g7h8" class="px-6 py-3 rounded-full bg-primary text-bgprimary font-bold text-sm hover:shadow-[0_0_25px_rgba(0,212,255,0.4)] transition btn-pulse">
+          Get in Touch
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Materials & Capabilities -->
+  <section data-id="302" class="py-16 px-4 md:px-8">
+    <div data-id="303" class="max-w-4xl mx-auto">
+      <h2 data-id="304" class="font-orbitron text-2xl md:text-3xl font-bold text-center mb-3">Materials & Capabilities</h2>
+      <p data-id="305" class="text-textmuted text-center text-sm mb-10">A wide range of filaments and techniques</p>
+      <div data-id="306" class="flex flex-wrap gap-3 justify-center mb-12">
+        <span data-id="307" class="material-pill">PLA</span>
+        <span data-id="308" class="material-pill">PETG</span>
+        <span data-id="309" class="material-pill">ABS</span>
+        <span data-id="310" class="material-pill">TPU</span>
+        <span data-id="311" class="material-pill">Resin</span>
+        <span data-id="312" class="material-pill">Wood-fill</span>
+        <span data-id="313" class="material-pill">Metal-fill</span>
+        <span data-id="314" class="material-pill">Carbon Fiber</span>
+      </div>
+      <div data-id="315" class="space-y-6">
+        <div data-id="316" class="skill-bar-item">
+          <div data-id="317" class="flex justify-between text-sm mb-2">
+            <span data-id="318" class="font-medium">Print Precision</span>
+            <span data-id="319" class="font-mono text-primary">95%</span>
+          </div>
+          <div data-id="320" class="w-full h-2.5 rounded-full bg-white/5">
+            <div data-id="321" class="skill-bar-fill h-full rounded-full bg-gradient-to-r from-primary to-cyan-300" style="--target-width:95%"></div>
+          </div>
+        </div>
+        <div data-id="322" class="skill-bar-item">
+          <div data-id="323" class="flex justify-between text-sm mb-2">
+            <span data-id="324" class="font-medium">Design Complexity</span>
+            <span data-id="325" class="font-mono text-secondary">88%</span>
+          </div>
+          <div data-id="326" class="w-full h-2.5 rounded-full bg-white/5">
+            <div data-id="327" class="skill-bar-fill h-full rounded-full bg-gradient-to-r from-secondary to-purple-300" style="--target-width:88%"></div>
+          </div>
+        </div>
+        <div data-id="328" class="skill-bar-item">
+          <div data-id="329" class="flex justify-between text-sm mb-2">
+            <span data-id="330" class="font-medium">Turnaround Speed</span>
+            <span data-id="331" class="font-mono text-emerald">92%</span>
+          </div>
+          <div data-id="332" class="w-full h-2.5 rounded-full bg-white/5">
+            <div data-id="333" class="skill-bar-fill h-full rounded-full bg-gradient-to-r from-emerald to-green-300" style="--target-width:92%"></div>
+          </div>
+        </div>
+        <div data-id="334" class="skill-bar-item">
+          <div data-id="335" class="flex justify-between text-sm mb-2">
+            <span data-id="336" class="font-medium">Customer Satisfaction</span>
+            <span data-id="337" class="font-mono text-yellow-400">100%</span>
+          </div>
+          <div data-id="338" class="w-full h-2.5 rounded-full bg-white/5">
+            <div data-id="339" class="skill-bar-fill h-full rounded-full bg-gradient-to-r from-yellow-500 to-yellow-300" style="--target-width:100%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Process -->
+  <section data-id="340" class="py-16 px-4 md:px-8 pb-24">
+    <div data-id="341" class="max-w-5xl mx-auto">
+      <h2 data-id="342" class="font-orbitron text-2xl md:text-3xl font-bold text-center mb-3">My Process</h2>
+      <p data-id="343" class="text-textmuted text-center text-sm mb-12">From idea to finished product, every step matters</p>
+      <div data-id="344" class="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-4">
+        <div data-id="345" class="glass-card p-6 text-center relative">
+          <div data-id="346" class="w-14 h-14 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center mx-auto mb-4">
+            <span data-id="347" class="font-orbitron text-primary font-bold text-lg">1</span>
+          </div>
+          <h3 data-id="348" class="font-orbitron text-sm font-semibold mb-2 text-primary">Design</h3>
+          <p data-id="349" class="text-textmuted text-xs leading-relaxed">You submit your idea or file — sketches, STLs, or just a description.</p>
+          <div data-id="350" class="hidden md:block absolute top-1/2 -right-4 w-8 h-[2px] bg-gradient-to-r from-primary/50 to-transparent"></div>
+        </div>
+        <div data-id="351" class="glass-card p-6 text-center relative">
+          <div data-id="352" class="w-14 h-14 rounded-full bg-secondary/10 border border-secondary/30 flex items-center justify-center mx-auto mb-4">
+            <span data-id="353" class="font-orbitron text-secondary font-bold text-lg">2</span>
+          </div>
+          <h3 data-id="354" class="font-orbitron text-sm font-semibold mb-2 text-secondary">Slice</h3>
+          <p data-id="355" class="text-textmuted text-xs leading-relaxed">I optimize slicer settings for your specific print — layer height, infill, supports.</p>
+          <div data-id="356" class="hidden md:block absolute top-1/2 -right-4 w-8 h-[2px] bg-gradient-to-r from-secondary/50 to-transparent"></div>
+        </div>
+        <div data-id="357" class="glass-card p-6 text-center relative">
+          <div data-id="358" class="w-14 h-14 rounded-full bg-emerald/10 border border-emerald/30 flex items-center justify-center mx-auto mb-4">
+            <span data-id="359" class="font-orbitron text-emerald font-bold text-lg">3</span>
+          </div>
+          <h3 data-id="360" class="font-orbitron text-sm font-semibold mb-2 text-emerald">Print</h3>
+          <p data-id="361" class="text-textmuted text-xs leading-relaxed">Precision printed on quality machines with careful monitoring throughout.</p>
+          <div data-id="362" class="hidden md:block absolute top-1/2 -right-4 w-8 h-[2px] bg-gradient-to-r from-emerald/50 to-transparent"></div>
+        </div>
+        <div data-id="363" class="glass-card p-6 text-center">
+          <div data-id="364" class="w-14 h-14 rounded-full bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center mx-auto mb-4">
+            <span data-id="365" class="font-orbitron text-yellow-400 font-bold text-lg">4</span>
+          </div>
+          <h3 data-id="366" class="font-orbitron text-sm font-semibold mb-2 text-yellow-400">Deliver</h3>
+          <p data-id="367" class="text-textmuted text-xs leading-relaxed">Carefully packaged and shipped right to your door, nationwide.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ========== CONTACT PAGE ========== -->
+<div data-id="368" id="page-contact" class="page-section" style="display:none">
+  <section data-id="369" class="pt-20 pb-8 px-4 md:px-8">
+    <div data-id="370" class="max-w-6xl mx-auto text-center">
+      <h1 data-id="371" class="font-orbitron text-3xl md:text-4xl font-bold mb-3">Get In Touch</h1>
+      <p data-id="372" class="text-textmuted text-sm md:text-base">Have a project idea? Let's make it real.</p>
+    </div>
+  </section>
+
+  <section data-id="373" class="py-12 px-4 md:px-8 pb-24">
+    <div data-id="374" class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+      <!-- Contact Form -->
+      <div data-id="375" class="glass-card p-6 md:p-8">
+        <h2 data-id="376" class="font-orbitron text-lg font-semibold mb-6">Send a Message</h2>
+        <form data-id="377" id="contact-form-i9j1" class="space-y-5">
+          <div data-id="378">
+            <label data-id="379" class="block text-sm text-textmuted mb-1.5">Name</label>
+            <input data-id="380" id="contact-name-k2l3" type="text" placeholder="Your name" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-textprimary focus:outline-none focus:border-primary focus:shadow-[0_0_15px_rgba(0,212,255,0.15)] transition placeholder:text-textmuted/50"/>
+          </div>
+          <div data-id="381">
+            <label data-id="382" class="block text-sm text-textmuted mb-1.5">Email</label>
+            <input data-id="383" id="contact-email-m4n5" type="email" placeholder="your@email.com" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-textprimary focus:outline-none focus:border-primary focus:shadow-[0_0_15px_rgba(0,212,255,0.15)] transition placeholder:text-textmuted/50"/>
+          </div>
+          <div data-id="384">
+            <label data-id="385" class="block text-sm text-textmuted mb-1.5">Subject</label>
+            <select data-id="386" id="contact-subject-o6p7" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-textprimary focus:outline-none focus:border-primary focus:shadow-[0_0_15px_rgba(0,212,255,0.15)] transition">
+              <option data-id="387" value="" class="bg-bgprimary">Select a subject</option>
+              <option data-id="388" value="custom" class="bg-bgprimary">Custom Order</option>
+              <option data-id="389" value="question" class="bg-bgprimary">Question</option>
+              <option data-id="390" value="prototype" class="bg-bgprimary">Prototype Request</option>
+              <option data-id="391" value="other" class="bg-bgprimary">Other</option>
+            </select>
+          </div>
+          <div data-id="392">
+            <label data-id="393" class="block text-sm text-textmuted mb-1.5">Message</label>
+            <textarea data-id="394" id="contact-message-q8r9" rows="5" placeholder="Tell me about your project..." class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-textprimary focus:outline-none focus:border-primary focus:shadow-[0_0_15px_rgba(0,212,255,0.15)] transition resize-none placeholder:text-textmuted/50"></textarea>
+          </div>
+          <button data-id="395" type="submit" id="contact-submit-s1t2" class="w-full py-3.5 rounded-xl bg-primary text-bgprimary font-bold text-sm hover:shadow-[0_0_25px_rgba(0,212,255,0.4)] transition btn-pulse">
+            Send Message
+          </button>
+        </form>
+      </div>
+
+      <!-- Contact Info -->
+      <div data-id="396" class="space-y-5">
+        <div data-id="397" class="glass-card p-5 flex items-start gap-4">
+          <div data-id="398" class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+            <svg data-id="399" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="1.5" stroke-linecap="round"><path data-id="400" d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle data-id="401" cx="12" cy="10" r="3"/></svg>
+          </div>
+          <div data-id="402">
+            <h3 data-id="403" class="font-semibold text-sm mb-1">Location</h3>
+            <p data-id="404" class="text-textmuted text-sm">Lakeland, FL, United States</p>
+          </div>
+        </div>
+        <div data-id="405" class="glass-card p-5 flex items-start gap-4">
+          <div data-id="406" class="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center flex-shrink-0">
+            <svg data-id="407" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="1.5" stroke-linecap="round"><rect data-id="408" width="20" height="16" x="2" y="4" rx="2"/><path data-id="409" d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          </div>
+          <div data-id="410">
+            <h3 data-id="411" class="font-semibold text-sm mb-1">Email</h3>
+            <p data-id="412" class="text-textmuted text-sm font-mono">tom.woodard49@gmail.com</p>
+          </div>
+        </div>
+        <div data-id="413" class="glass-card p-5 flex items-start gap-4">
+          <div data-id="414" class="w-10 h-10 rounded-lg bg-emerald/10 flex items-center justify-center flex-shrink-0">
+            <svg data-id="415" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="1.5" stroke-linecap="round"><circle data-id="416" cx="12" cy="12" r="10"/><polyline data-id="417" points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div data-id="418">
+            <h3 data-id="419" class="font-semibold text-sm mb-1">Response Time</h3>
+            <p data-id="420" class="text-textmuted text-sm">Usually within 24 hours</p>
+          </div>
+        </div>
+        <div data-id="421" class="glass-card p-5">
+          <h3 data-id="422" class="font-semibold text-sm mb-4">Find me on:</h3>
+          <div data-id="423" class="flex gap-3">
+            <a data-id="424" class="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary/10 hover:border-primary/30 transition cursor-pointer" title="GitHub">
+              <svg data-id="425" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" class="text-textmuted hover:text-primary"><path data-id="426" d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+            </a>
+            <a data-id="427" class="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary/10 hover:border-primary/30 transition cursor-pointer" title="Instagram">
+              <svg data-id="428" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" class="text-textmuted hover:text-primary"><rect data-id="429" width="20" height="20" x="2" y="2" rx="5"/><circle data-id="430" cx="12" cy="12" r="5"/><circle data-id="431" cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>
+            </a>
+            <a data-id="432" class="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary/10 hover:border-primary/30 transition cursor-pointer" title="Etsy">
+              <svg data-id="433" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" class="text-textmuted hover:text-primary"><path data-id="434" d="M8.559 4.252c0-.603.093-.756.756-.756h5.11c2.003 0 2.456.932 2.905 2.677h.8L17.878 2h-.753c-.225.535-.376.535-.93.535H7.55c-1.399 0-1.843.008-2.985.008L4 2.527v.753l1.134.15c.907.12 1.116.451 1.209 1.278v12.29c0 .903-.222 1.26-1.209 1.357L4 18.505v.753h9.166c1.607 0 2.16.008 3.025.008l.42-4.522h-.756c-.455 2.145-1.113 3.39-3.566 3.39H9.315c-.663 0-.756-.152-.756-.755v-5.934h3.114c1.507 0 1.865.679 2.013 1.963h.756V8.37h-.756c-.301 1.358-.647 1.963-2.013 1.963H8.559V4.252z"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+</main>
+
+<!-- ==================== FOOTER ==================== -->
+<footer data-id="435" id="footer-main-u3v4" class="relative z-10 border-t border-white/5 bg-bgprimary/80 backdrop-blur-sm">
+  <div data-id="436" class="max-w-6xl mx-auto px-4 md:px-8 py-12">
+    <div data-id="437" class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+      <div data-id="438">
+        <div data-id="439" class="flex items-center gap-2 mb-4">
+          <svg data-id="440" width="24" height="24" viewBox="0 0 32 32" fill="none">
+            <rect data-id="441" x="8" y="20" width="16" height="3" rx="1" fill="rgba(0,212,255,0.3)" stroke="#00d4ff" stroke-width="0.8"/>
+            <rect data-id="442" x="9" y="16" width="14" height="3" rx="1" fill="rgba(0,212,255,0.25)" stroke="#00d4ff" stroke-width="0.8"/>
+            <rect data-id="443" x="10" y="12" width="12" height="3" rx="1" fill="rgba(0,212,255,0.2)" stroke="#00d4ff" stroke-width="0.8"/>
+            <line data-id="444" x1="16" y1="2" x2="16" y2="12" stroke="#00d4ff" stroke-width="1.5" stroke-linecap="round"/>
+            <circle data-id="445" cx="16" cy="2" r="2" fill="#00d4ff" opacity="0.8"/>
+          </svg>
+          <span data-id="446" class="font-orbitron text-sm font-bold text-primary cyan-glow">TomKim3dprints</span>
+        </div>
+        <p data-id="447" class="text-textmuted text-xs italic">Precision Printed. Passionately Crafted.</p>
+      </div>
+      <div data-id="448">
+        <h4 data-id="449" class="font-semibold text-sm mb-3">Quick Links</h4>
+        <div data-id="450" class="flex flex-col gap-2">
+          <a data-id="451" data-nav="home" class="footer-nav text-textmuted text-xs hover:text-primary transition cursor-pointer">Home</a>
+          <a data-id="452" data-nav="portfolio" class="footer-nav text-textmuted text-xs hover:text-primary transition cursor-pointer">Portfolio</a>
+          <a data-id="453" data-nav="about" class="footer-nav text-textmuted text-xs hover:text-primary transition cursor-pointer">About</a>
+          <a data-id="454" data-nav="contact" class="footer-nav text-textmuted text-xs hover:text-primary transition cursor-pointer">Contact</a>
+        </div>
+      </div>
+      <div data-id="455">
+        <h4 data-id="456" class="font-semibold text-sm mb-3">Connect</h4>
+        <div data-id="457" class="flex gap-3 mb-4">
+          <a data-id="458" class="w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center hover:bg-primary/10 transition cursor-pointer" title="GitHub">
+            <svg data-id="459" width="16" height="16" viewBox="0 0 24 24" fill="#7a8ba0"><path data-id="460" d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+          </a>
+          <a data-id="461" class="w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center hover:bg-primary/10 transition cursor-pointer" title="Instagram">
+            <svg data-id="462" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7a8ba0" stroke-width="1.5" stroke-linecap="round"><rect data-id="463" width="20" height="20" x="2" y="2" rx="5"/><circle data-id="464" cx="12" cy="12" r="5"/></svg>
+          </a>
+          <a data-id="465" class="w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center hover:bg-primary/10 transition cursor-pointer" title="Etsy">
+            <svg data-id="466" width="16" height="16" viewBox="0 0 24 24" fill="#7a8ba0"><path data-id="467" d="M8.559 4.252c0-.603.093-.756.756-.756h5.11c2.003 0 2.456.932 2.905 2.677h.8L17.878 2h-.753c-.225.535-.376.535-.93.535H7.55c-1.399 0-1.843.008-2.985.008L4 2.527v.753l1.134.15c.907.12 1.116.451 1.209 1.278v12.29c0 .903-.222 1.26-1.209 1.357L4 18.505v.753h9.166c1.607 0 2.16.008 3.025.008l.42-4.522h-.756c-.455 2.145-1.113 3.39-3.566 3.39H9.315c-.663 0-.756-.152-.756-.755v-5.934h3.114c1.507 0 1.865.679 2.013 1.963h.756V8.37h-.756c-.301 1.358-.647 1.963-2.013 1.963H8.559V4.252z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div data-id="468" class="border-t border-white/5 pt-6 flex flex-col md:flex-row justify-between items-center gap-2">
+      <p data-id="469" class="text-textmuted text-xs">&copy; 2026 TomKim3dprints. All rights reserved.</p>
+      <p data-id="470" class="text-textmuted text-xs">Made by Copilot</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ==================== ADMIN MODAL ==================== -->
+<div data-id="471" id="admin-modal-overlay-w5x6" class="modal-overlay fixed inset-0 z-[200] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+  <div data-id="472" class="glass-card w-full max-w-lg max-h-[90vh] overflow-y-auto p-6 md:p-8 border border-primary/20">
+    <div data-id="473" class="flex justify-between items-center mb-6">
+      <h2 data-id="474" id="modal-title-y7z8" class="font-orbitron text-lg font-bold">Add New Item</h2>
+      <button data-id="475" id="modal-close-btn-a9b1" class="w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center hover:bg-white/10 transition">
+        <i data-id="476" data-lucide="x" class="w-5 h-5"></i>
+      </button>
+    </div>
+    <form data-id="477" id="admin-form-c2d3" class="space-y-4">
+      <input data-id="478" type="hidden" id="edit-item-id-e4f5" value=""/>
+      <div data-id="479">
+        <label data-id="480" class="block text-sm text-textmuted mb-1.5">Title</label>
+        <input data-id="481" id="item-title-g6h7" type="text" placeholder="e.g. Dragon Miniature" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-textprimary focus:outline-none focus:border-primary transition placeholder:text-textmuted/50" required/>
+      </div>
+      <div data-id="482">
+        <label data-id="483" class="block text-sm text-textmuted mb-1.5">Category</label>
+        <select data-id="484" id="item-category-i8j9" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-textprimary focus:outline-none focus:border-primary transition" required>
+          <option data-id="485" value="" class="bg-bgprimary">Select category</option>
+          <option data-id="486" value="Miniatures" class="bg-bgprimary">Miniatures</option>
+          <option data-id="487" value="Functional Parts" class="bg-bgprimary">Functional Parts</option>
+          <option data-id="488" value="Art & Decor" class="bg-bgprimary">Art & Decor</option>
+          <option data-id="489" value="Prototypes" class="bg-bgprimary">Prototypes</option>
+          <option data-id="490" value="Custom Orders" class="bg-bgprimary">Custom Orders</option>
+        </select>
+      </div>
+      <div data-id="491">
+        <label data-id="492" class="block text-sm text-textmuted mb-1.5">Description <span data-id="493" id="char-counter-k1l2" class="text-xs text-textmuted/60">(0/500)</span></label>
+        <textarea data-id="494" id="item-desc-m3n4" rows="3" maxlength="500" placeholder="Describe this print..." class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-textprimary focus:outline-none focus:border-primary transition resize-none placeholder:text-textmuted/50"></textarea>
+      </div>
+      <div data-id="495" class="grid grid-cols-2 gap-4">
+        <div data-id="496">
+          <label data-id="497" class="block text-sm text-textmuted mb-1.5">Materials Used</label>
+          <input data-id="498" id="item-materials-o5p6" type="text" placeholder="e.g. PLA, supports" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-textprimary focus:outline-none focus:border-primary transition placeholder:text-textmuted/50"/>
+        </div>
+        <div data-id="499">
+          <label data-id="500" class="block text-sm text-textmuted mb-1.5">Print Time</label>
+          <input data-id="501" id="item-time-q7r8" type="text" placeholder="e.g. 6 hours" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-textprimary focus:outline-none focus:border-primary transition placeholder:text-textmuted/50"/>
+        </div>
+      </div>
+      <div data-id="502">
+        <label data-id="503" class="block text-sm text-textmuted mb-1.5">Image</label>
+        <input data-id="504" id="item-image-s9t1" type="file" accept="image/*" class="w-full text-sm text-textmuted file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:bg-primary/10 file:text-primary file:cursor-pointer hover:file:bg-primary/20"/>
+        <div data-id="505" id="image-preview-container-u2v3" class="mt-3 hidden">
+          <img data-id="506" id="image-preview-w4x5" class="upload-preview" alt="Preview"/>
+        </div>
+      </div>
+      <div data-id="507" class="flex items-center gap-2">
+        <input data-id="508" type="checkbox" id="item-featured-y6z7" class="w-4 h-4 accent-primary"/>
+        <label data-id="509" for="item-featured-y6z7" class="text-sm text-textmuted cursor-pointer" id="featured-label-a8b9">Feature this item on homepage?</label>
+      </div>
+      <div data-id="510" class="flex gap-3 pt-2">
+        <button data-id="511" type="submit" id="save-item-btn-c1d2" class="flex-1 py-3 rounded-xl bg-primary text-bgprimary font-bold text-sm hover:shadow-[0_0_25px_rgba(0,212,255,0.4)] transition">
+          Save Item
+        </button>
+        <button data-id="512" type="button" id="cancel-item-btn-e3f4" class="px-6 py-3 rounded-xl border border-white/10 text-textmuted text-sm font-medium hover:bg-white/5 transition">
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ==================== LIGHTBOX MODAL ==================== -->
+<div data-id="513" id="lightbox-modal-g5h6" class="modal-overlay fixed inset-0 z-[200] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+  <div data-id="514" class="glass-card w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-primary/20">
+    <div data-id="515" class="relative">
+      <div data-id="516" id="lightbox-image-area-i7j8" class="w-full aspect-video bg-white/5 flex items-center justify-center overflow-hidden rounded-t-2xl">
+        <svg data-id="517" id="lightbox-placeholder-svg" width="80" height="80" viewBox="0 0 120 120" fill="none" class="opacity-30">
+          <rect data-id="518" x="30" y="70" width="60" height="8" rx="2" stroke="#00d4ff" stroke-width="1"/>
+          <rect data-id="519" x="33" y="60" width="54" height="8" rx="2" stroke="#00d4ff" stroke-width="1"/>
+          <rect data-id="520" x="36" y="50" width="48" height="8" rx="2" stroke="#00d4ff" stroke-width="1"/>
+          <rect data-id="521" x="39" y="40" width="42" height="8" rx="2" stroke="#00d4ff" stroke-width="1"/>
+        </svg>
+      </div>
+      <button data-id="522" id="lightbox-close-k9l1" class="absolute top-3 right-3 w-9 h-9 rounded-lg bg-black/50 backdrop-blur-sm flex items-center justify-center hover:bg-black/70 transition">
+        <i data-id="523" data-lucide="x" class="w-5 h-5"></i>
+      </button>
+    </div>
+    <div data-id="524" class="p-6">
+      <div data-id="525" class="flex items-start justify-between gap-3 mb-3">
+        <h2 data-id="526" id="lightbox-title-m2n3" class="font-orbitron text-xl font-bold"></h2>
+        <span data-id="527" id="lightbox-badge-o4p5" class="text-xs px-3 py-1 rounded-full flex-shrink-0"></span>
+      </div>
+      <p data-id="528" id="lightbox-desc-q6r7" class="text-textmuted text-sm leading-relaxed mb-4"></p>
+      <div data-id="529" class="grid grid-cols-2 md:grid-cols-3 gap-4 text-xs">
+        <div data-id="530">
+          <span data-id="531" class="text-textmuted block mb-1">Materials</span>
+          <span data-id="532" id="lightbox-materials-s8t9" class="font-mono text-primary"></span>
+        </div>
+        <div data-id="533">
+          <span data-id="534" class="text-textmuted block mb-1">Print Time</span>
+          <span data-id="535" id="lightbox-time-u1v2" class="font-mono text-primary"></span>
+        </div>
+        <div data-id="536">
+          <span data-id="537" class="text-textmuted block mb-1">Added</span>
+          <span data-id="538" id="lightbox-date-w3x4" class="font-mono text-primary"></span>
+        </div>
+      </div>
+      <div data-id="539" id="lightbox-delete-area-y5z6" class="mt-6 pt-4 border-t border-white/5">
+        <button data-id="540" id="lightbox-delete-btn-a7b8" class="px-4 py-2 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-medium hover:bg-red-500/20 transition">
+          Delete Item
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===================== APP DATA (AppSDK persistence) =====================
+const COLLECTION = 'portfolio_items';
+
+// In-memory image cache (images cannot be stored in AppSDK)
+const imageCache = {};
+
+// In-memory items cache
+let itemsCache = [];
+let dataLoaded = false;
+
+async function loadItems() {
+  try {
+    if (window.AppSDK) {
+      const result = await AppSDK.list(COLLECTION);
+      itemsCache = result.documents.map(doc => ({
+        id: doc.entityType,
+        ...doc.data
+      }));
+    } else {
+      itemsCache = [];
+    }
+  } catch(e) {
+    console.error('Failed to load items:', e);
+    itemsCache = [];
+  }
+  dataLoaded = true;
+}
+
+function getItems() {
+  // Return items with image from cache
+  return itemsCache.map(item => ({
+    ...item,
+    image: imageCache[item.id] || ''
+  }));
+}
+
+async function saveItem(item) {
+  // Store image in memory cache only (cannot persist images in AppSDK)
+  if (item.image) {
+    imageCache[item.id] = item.image;
+  }
+
+  // Save item data without image to AppSDK
+  const dataToSave = { ...item };
+  delete dataToSave.image;
+  delete dataToSave.id;
+
+  try {
+    if (window.AppSDK) {
+      await AppSDK.upsert(COLLECTION, item.id, dataToSave);
+    }
+  } catch(e) {
+    console.error('Failed to save item:', e);
+  }
+
+  // Update in-memory cache
+  const idx = itemsCache.findIndex(i => i.id === item.id);
+  if (idx >= 0) {
+    itemsCache[idx] = { ...dataToSave, id: item.id };
+  } else {
+    itemsCache.push({ ...dataToSave, id: item.id });
+  }
+}
+
+async function deleteItem(id) {
+  try {
+    if (window.AppSDK) {
+      await AppSDK.delete(COLLECTION, id);
+    }
+  } catch(e) {
+    console.error('Failed to delete item:', e);
+  }
+
+  // Remove from caches
+  itemsCache = itemsCache.filter(i => i.id !== id);
+  delete imageCache[id];
+}
+
+// ===================== ROUTER =====================
+const pages = ['home','portfolio','about','contact'];
+let currentPage = 'home';
+
+function navigateTo(page) {
+  if (!pages.includes(page)) page = 'home';
+  const prev = document.getElementById('page-' + currentPage);
+  if (prev) {
+    prev.classList.remove('active');
+    setTimeout(() => {
+      prev.style.display = 'none';
+      showPage(page);
+    }, 300);
+  } else {
+    showPage(page);
+  }
+}
+
+function showPage(page) {
+  currentPage = page;
+  window.location.hash = '#' + page;
+  const el = document.getElementById('page-' + page);
+  if (el) {
+    el.style.display = 'block';
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        el.classList.add('active');
+      });
+    });
+  }
+  // Update nav active states
+  document.querySelectorAll('.nav-link, .mobile-nav-link, .footer-nav').forEach(link => {
+    link.style.color = link.dataset.nav === page ? '#00d4ff' : '';
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  // Close mobile menu
+  document.getElementById('mobile-menu-overlay').classList.remove('open');
+  // Trigger animations — reset flags so they re-animate on revisit
+  if (page === 'home') { countUpDone = false; initCountUp(); renderFeatured(); }
+  if (page === 'portfolio') { renderPortfolio(); triggerUnderline(); }
+  if (page === 'about') { skillBarsDone = false; resetSkillBars(); initSkillBars(); }
+}
+
+// Init from hash
+async function initRouter() {
+  // Load data first
+  await loadItems();
+
+  const hash = window.location.hash.replace('#','') || 'home';
+  const page = pages.includes(hash) ? hash : 'home';
+  const el = document.getElementById('page-' + page);
+  if (el) {
+    el.style.display = 'block';
+    requestAnimationFrame(() => el.classList.add('active'));
+  }
+  currentPage = page;
+  document.querySelectorAll('.nav-link, .mobile-nav-link, .footer-nav').forEach(link => {
+    link.style.color = link.dataset.nav === page ? '#00d4ff' : '';
+  });
+  if (page === 'home') { setTimeout(() => { initCountUp(); renderFeatured(); }, 500); }
+  if (page === 'portfolio') { renderPortfolio(); setTimeout(triggerUnderline, 500); }
+  if (page === 'about') { setTimeout(initSkillBars, 500); }
+}
+
+// ===================== NAV LINKS =====================
+document.querySelectorAll('[data-nav]').forEach(link => {
+  link.addEventListener('click', () => navigateTo(link.dataset.nav));
+});
+
+// Logo => home
+document.getElementById('logo-link-a1b2').addEventListener('click', () => navigateTo('home'));
+
+// CTA buttons
+document.getElementById('cta-portfolio-h8i9').addEventListener('click', () => navigateTo('portfolio'));
+document.getElementById('cta-quote-j1k2').addEventListener('click', () => navigateTo('contact'));
+document.getElementById('cta-contact-x6y7').addEventListener('click', () => navigateTo('contact'));
+document.getElementById('about-contact-btn-g7h8').addEventListener('click', () => navigateTo('contact'));
+
+// Hash change
+window.addEventListener('hashchange', () => {
+  const hash = window.location.hash.replace('#','') || 'home';
+  if (hash !== currentPage) navigateTo(hash);
+});
+
+// ===================== MOBILE MENU =====================
+document.getElementById('mobile-menu-btn-q5w6').addEventListener('click', () => {
+  document.getElementById('mobile-menu-overlay').classList.add('open');
+});
+document.getElementById('mobile-menu-close-e1r2').addEventListener('click', () => {
+  document.getElementById('mobile-menu-overlay').classList.remove('open');
+});
+
+// ===================== NAVBAR SCROLL =====================
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('navbar-main');
+  if (window.scrollY > 50) {
+    nav.classList.add('scrolled');
+  } else {
+    nav.classList.remove('scrolled');
+  }
+});
+
+// ===================== EDIT MODE =====================
+let editMode = false;
+const editToggle = document.getElementById('edit-mode-toggle-r3f4');
+const editToggleMobile = document.getElementById('edit-mode-toggle-mobile-u8i9');
+
+function setEditMode(val) {
+  editMode = val;
+  editToggle.checked = val;
+  editToggleMobile.checked = val;
+  document.body.classList.toggle('edit-mode', val);
+  if (currentPage === 'portfolio') renderPortfolio();
+  if (currentPage === 'home') renderFeatured();
+}
+editToggle.addEventListener('change', () => setEditMode(editToggle.checked));
+editToggleMobile.addEventListener('change', () => setEditMode(editToggleMobile.checked));
+
+// Also allow clicking the text label to toggle (using div wrapper, not a real label element)
+document.getElementById('edit-toggle-text-r3f4').addEventListener('click', () => {
+  setEditMode(!editToggle.checked);
+});
+document.getElementById('edit-toggle-text-mobile-u8i9').addEventListener('click', () => {
+  setEditMode(!editToggleMobile.checked);
+});
+
+// ===================== ADMIN MODAL =====================
+const adminModal = document.getElementById('admin-modal-overlay-w5x6');
+let editingItemId = null;
+
+function openAdminModal(item) {
+  editingItemId = item ? item.id : null;
+  document.getElementById('modal-title-y7z8').textContent = item ? 'Edit Item' : 'Add New Item';
+  document.getElementById('item-title-g6h7').value = item ? item.title : '';
+  document.getElementById('item-category-i8j9').value = item ? item.category : '';
+  document.getElementById('item-desc-m3n4').value = item ? item.description : '';
+  document.getElementById('item-materials-o5p6').value = item ? item.materials : '';
+  document.getElementById('item-time-q7r8').value = item ? item.printTime : '';
+  document.getElementById('item-featured-y6z7').checked = item ? item.featured : false;
+  document.getElementById('edit-item-id-e4f5').value = item ? item.id : '';
+  updateCharCounter();
+  // Image preview
+  const previewContainer = document.getElementById('image-preview-container-u2v3');
+  const previewImg = document.getElementById('image-preview-w4x5');
+  if (item && item.image) {
+    previewImg.src = item.image;
+    previewContainer.classList.remove('hidden');
+  } else {
+    previewImg.removeAttribute('src');
+    previewContainer.classList.add('hidden');
+  }
+  document.getElementById('item-image-s9t1').value = '';
+  adminModal.classList.add('open');
+}
+
+function closeAdminModal() {
+  adminModal.classList.remove('open');
+  editingItemId = null;
+}
+
+document.getElementById('add-item-btn-n7m8').addEventListener('click', () => openAdminModal(null));
+document.getElementById('add-item-btn-mobile-p3o4').addEventListener('click', () => {
+  document.getElementById('mobile-menu-overlay').classList.remove('open');
+  openAdminModal(null);
+});
+document.getElementById('modal-close-btn-a9b1').addEventListener('click', closeAdminModal);
+document.getElementById('cancel-item-btn-e3f4').addEventListener('click', closeAdminModal);
+
+// Close modal on overlay click
+adminModal.addEventListener('click', (e) => {
+  if (e.target === adminModal) closeAdminModal();
+});
+
+// Char counter
+function updateCharCounter() {
+  const desc = document.getElementById('item-desc-m3n4');
+  const counter = document.getElementById('char-counter-k1l2');
+  counter.textContent = '(' + desc.value.length + '/500)';
+}
+document.getElementById('item-desc-m3n4').addEventListener('input', updateCharCounter);
+
+// Image preview on file select
+document.getElementById('item-image-s9t1').addEventListener('change', function() {
+  const file = this.files[0];
+  const previewContainer = document.getElementById('image-preview-container-u2v3');
+  const previewImg = document.getElementById('image-preview-w4x5');
+  if (file) {
+    const reader = new FileReader();
+    reader.addEventListener('load', function() {
+      previewImg.src = reader.result;
+      previewContainer.classList.remove('hidden');
+    });
+    reader.readAsDataURL(file);
+  }
+});
+
+// Save item
+document.getElementById('admin-form-c2d3').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const title = document.getElementById('item-title-g6h7').value.trim();
+  const category = document.getElementById('item-category-i8j9').value;
+  const description = document.getElementById('item-desc-m3n4').value.trim();
+  const materials = document.getElementById('item-materials-o5p6').value.trim();
+  const printTime = document.getElementById('item-time-q7r8').value.trim();
+  const featured = document.getElementById('item-featured-y6z7').checked;
+  const previewImg = document.getElementById('image-preview-w4x5');
+  const hasImage = previewImg.hasAttribute('src') && previewImg.src && !previewImg.src.endsWith(window.location.pathname);
+  const image = hasImage ? previewImg.src : '';
+
+  if (!title || !category) {
+    showToast('Please fill in title and category.');
+    return;
+  }
+
+  if (editingItemId) {
+    const existingItems = getItems();
+    const existing = existingItems.find(i => i.id === editingItemId);
+    const updatedItem = {
+      id: editingItemId,
+      title,
+      category,
+      description,
+      materials,
+      printTime,
+      featured,
+      image: image || (existing ? existing.image : ''),
+      dateAdded: existing ? existing.dateAdded : new Date().toISOString()
+    };
+    await saveItem(updatedItem);
+    showToast('Item updated successfully!');
+  } else {
+    const newId = Date.now().toString(36) + Math.random().toString(36).substring(2, 7);
+    const newItem = {
+      id: newId,
+      title,
+      category,
+      description,
+      materials,
+      printTime,
+      featured,
+      image: image,
+      dateAdded: new Date().toISOString()
+    };
+    await saveItem(newItem);
+    showToast('Item added to portfolio!');
+  }
+
+  closeAdminModal();
+  if (currentPage === 'portfolio') renderPortfolio();
+  if (currentPage === 'home') renderFeatured();
+});
+
+// ===================== TOAST =====================
+let toastTimeout = null;
+function showToast(msg) {
+  const toast = document.getElementById('toast-msg-l4m5');
+  document.getElementById('toast-text-n6o7').textContent = msg;
+  toast.classList.add('show');
+  if (toastTimeout) clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// ===================== LIGHTBOX =====================
+const lightboxModal = document.getElementById('lightbox-modal-g5h6');
+let lightboxItemId = null;
+
+function openLightbox(item) {
+  lightboxItemId = item.id;
+  const imgArea = document.getElementById('lightbox-image-area-i7j8');
+  const placeholderSvg = document.getElementById('lightbox-placeholder-svg');
+  // Remove existing dynamic image
+  const existingImg = imgArea.querySelector('img');
+  if (existingImg) existingImg.remove();
+
+  if (item.image) {
+    placeholderSvg.style.display = 'none';
+    const img = document.createElement('img');
+    img.src = item.image;
+    img.alt = item.title;
+    img.className = 'w-full h-full object-cover';
+    imgArea.appendChild(img);
+  } else {
+    placeholderSvg.style.display = 'block';
+  }
+
+  document.getElementById('lightbox-title-m2n3').textContent = item.title;
+  const badge = document.getElementById('lightbox-badge-o4p5');
+  badge.textContent = item.category;
+  badge.className = 'text-xs px-3 py-1 rounded-full flex-shrink-0 ' + getBadgeClass(item.category);
+  document.getElementById('lightbox-desc-q6r7').textContent = item.description || 'No description provided.';
+  document.getElementById('lightbox-materials-s8t9').textContent = item.materials || '—';
+  document.getElementById('lightbox-time-u1v2').textContent = item.printTime || '—';
+  const d = item.dateAdded ? new Date(item.dateAdded) : new Date();
+  document.getElementById('lightbox-date-w3x4').textContent = d.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+  lightboxModal.classList.add('open');
+}
+
+function closeLightbox() {
+  lightboxModal.classList.remove('open');
+  lightboxItemId = null;
+}
+
+document.getElementById('lightbox-close-k9l1').addEventListener('click', closeLightbox);
+lightboxModal.addEventListener('click', (e) => {
+  if (e.target === lightboxModal) closeLightbox();
+});
+
+// Delete from lightbox
+document.getElementById('lightbox-delete-btn-a7b8').addEventListener('click', async () => {
+  if (!lightboxItemId) return;
+  await deleteItem(lightboxItemId);
+  closeLightbox();
+  showToast('Item deleted.');
+  if (currentPage === 'portfolio') renderPortfolio();
+  if (currentPage === 'home') renderFeatured();
+});
+
+// ESC key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeAdminModal();
+    closeLightbox();
+  }
+});
+
+// ===================== BADGE CLASSES =====================
+function getBadgeClass(cat) {
+  const map = {
+    'Miniatures': 'badge-miniatures',
+    'Functional Parts': 'badge-functional',
+    'Art & Decor': 'badge-art',
+    'Prototypes': 'badge-prototypes',
+    'Custom Orders': 'badge-custom'
+  };
+  return map[cat] || 'badge-miniatures';
+}
+
+// ===================== PLACEHOLDER SVG =====================
+function placeholderSVG() {
+  return '<svg width="100%" height="100%" viewBox="0 0 200 200" fill="none" class="w-full h-full p-8 opacity-20">' +
+    '<rect x="50" y="130" width="100" height="14" rx="3" stroke="#00d4ff" stroke-width="1.5"/>' +
+    '<rect x="55" y="114" width="90" height="14" rx="3" stroke="#00d4ff" stroke-width="1.5"/>' +
+    '<rect x="60" y="98" width="80" height="14" rx="3" stroke="#00d4ff" stroke-width="1.5"/>' +
+    '<rect x="65" y="82" width="70" height="14" rx="3" stroke="#00d4ff" stroke-width="1.5"/>' +
+    '<rect x="70" y="66" width="60" height="14" rx="3" stroke="#00d4ff" stroke-width="1.5"/>' +
+    '<line x1="100" y1="40" x2="100" y2="66" stroke="#00d4ff" stroke-width="2" stroke-linecap="round"/>' +
+    '<circle cx="100" cy="36" r="4" fill="#00d4ff" opacity="0.6"/>' +
+    '<rect x="40" y="146" width="120" height="20" rx="3" stroke="rgba(0,212,255,0.3)" stroke-width="1"/>' +
+  '</svg>';
+}
+
+// ===================== ESCAPE HTML =====================
+function escapeHtml(str) {
+  if (!str) return '';
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// ===================== RENDER FEATURED =====================
+function renderFeatured() {
+  const grid = document.getElementById('featured-grid-p7q8');
+  const items = getItems().filter(i => i.featured);
+  let html = '';
+
+  if (items.length === 0) {
+    for (let i = 0; i < 3; i++) {
+      html += '<div class="glass-card overflow-hidden group">' +
+        '<div class="aspect-video bg-white/[0.02] flex items-center justify-center">' + placeholderSVG() + '</div>' +
+        '<div class="p-5">' +
+          '<span class="text-xs px-2.5 py-1 rounded-full badge-miniatures mb-2 inline-block">Sample</span>' +
+          '<h3 class="font-orbitron text-sm font-semibold mb-1">Your work goes here</h3>' +
+          '<p class="text-textmuted text-xs">Add items via the + button above</p>' +
+        '</div>' +
+      '</div>';
+    }
+  } else {
+    items.slice(0, 3).forEach(item => {
+      const safeTitle = escapeHtml(item.title);
+      const safeDesc = escapeHtml(item.description);
+      html += '<div class="glass-card overflow-hidden group cursor-pointer relative" data-item-id="' + escapeHtml(item.id) + '">' +
+        '<div class="aspect-video bg-white/[0.02] flex items-center justify-center overflow-hidden">' +
+          (item.image ? '<img src="' + escapeHtml(item.image) + '" alt="' + safeTitle + '" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"/>' : placeholderSVG()) +
+        '</div>' +
+        '<div class="p-5">' +
+          '<span class="text-xs px-2.5 py-1 rounded-full ' + getBadgeClass(item.category) + ' mb-2 inline-block">' + escapeHtml(item.category) + '</span>' +
+          '<h3 class="font-orbitron text-sm font-semibold mb-1">' + safeTitle + '</h3>' +
+          '<p class="text-textmuted text-xs line-clamp-2">' + safeDesc + '</p>' +
+        '</div>' +
+        (editMode ? '<div class="edit-overlay"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="2" stroke-linecap="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></div>' : '') +
+      '</div>';
+    });
+  }
+  grid.innerHTML = html;
+
+  // Attach click handlers
+  grid.querySelectorAll('[data-item-id]').forEach(card => {
+    card.addEventListener('click', () => {
+      const item = getItems().find(i => i.id === card.dataset.itemId);
+      if (!item) return;
+      if (editMode) {
+        openAdminModal(item);
+      } else {
+        openLightbox(item);
+      }
+    });
+  });
+}
+
+// ===================== RENDER PORTFOLIO =====================
+let activeFilter = 'all';
+
+function renderPortfolio() {
+  const grid = document.getElementById('portfolio-grid-c3d4');
+  const emptyState = document.getElementById('portfolio-empty-e5f6');
+  let items = getItems();
+  if (activeFilter !== 'all') {
+    items = items.filter(i => i.category === activeFilter);
+  }
+
+  if (items.length === 0) {
+    grid.innerHTML = '';
+    emptyState.classList.remove('hidden');
+    return;
+  }
+
+  emptyState.classList.add('hidden');
+  let html = '';
+  items.forEach(item => {
+    const safeTitle = escapeHtml(item.title);
+    const safeDesc = escapeHtml(item.description);
+    html += '<div class="glass-card overflow-hidden group cursor-pointer relative" data-item-id="' + escapeHtml(item.id) + '">' +
+      '<div class="aspect-square bg-white/[0.02] flex items-center justify-center overflow-hidden relative">' +
+        (item.image ? '<img src="' + escapeHtml(item.image) + '" alt="' + safeTitle + '" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy"/>' : placeholderSVG()) +
+        '<span class="absolute top-3 left-3 text-xs px-2.5 py-1 rounded-full ' + getBadgeClass(item.category) + ' backdrop-blur-sm">' + escapeHtml(item.category) + '</span>' +
+        '<div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">' +
+          '<h3 class="font-orbitron text-sm font-semibold mb-1">' + safeTitle + '</h3>' +
+          '<p class="text-textmuted text-xs line-clamp-2 mb-2">' + safeDesc + '</p>' +
+          '<span class="text-primary text-xs font-semibold">View Details →</span>' +
+        '</div>' +
+      '</div>' +
+      (editMode ? '<div class="edit-overlay"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="2" stroke-linecap="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></div>' : '') +
+    '</div>';
+  });
+  grid.innerHTML = html;
+
+  grid.querySelectorAll('[data-item-id]').forEach(card => {
+    card.addEventListener('click', () => {
+      const item = getItems().find(i => i.id === card.dataset.itemId);
+      if (!item) return;
+      if (editMode) {
+        openAdminModal(item);
+      } else {
+        openLightbox(item);
+      }
+    });
+  });
+}
+
+// Filter pills
+document.querySelectorAll('.filter-pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+    activeFilter = pill.dataset.filter;
+    renderPortfolio();
+  });
+});
+
+// ===================== COUNT-UP =====================
+let countUpDone = false;
+function initCountUp() {
+  if (countUpDone) return;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        countUpDone = true;
+        document.querySelectorAll('.count-up').forEach(el => {
+          const target = parseInt(el.dataset.target);
+          let current = 0;
+          const duration = 1500;
+          const step = target / (duration / 16);
+          function animate() {
+            current += step;
+            if (current >= target) {
+              el.textContent = target;
+            } else {
+              el.textContent = Math.floor(current);
+              requestAnimationFrame(animate);
+            }
+          }
+          animate();
+        });
+        observer.disconnect();
+      }
+    });
+  }, { threshold: 0.3 });
+  const statsSection = document.getElementById('stats-section-l3m4');
+  if (statsSection) observer.observe(statsSection);
+}
+
+// ===================== SKILL BARS =====================
+let skillBarsDone = false;
+
+function resetSkillBars() {
+  document.querySelectorAll('.skill-bar-fill').forEach(bar => {
+    bar.classList.remove('animated');
+  });
+}
+
+function initSkillBars() {
+  if (skillBarsDone) return;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        skillBarsDone = true;
+        document.querySelectorAll('.skill-bar-fill').forEach(bar => {
+          setTimeout(() => bar.classList.add('animated'), 200);
+        });
+        observer.disconnect();
+      }
+    });
+  }, { threshold: 0.2 });
+  document.querySelectorAll('.skill-bar-item').forEach(el => observer.observe(el));
+}
+
+// ===================== ANIMATED UNDERLINE =====================
+function triggerUnderline() {
+  const el = document.getElementById('portfolio-title-a1b2');
+  if (el) {
+    // Reset then trigger
+    el.classList.remove('visible');
+    setTimeout(() => el.classList.add('visible'), 300);
+  }
+}
+
+// ===================== CONTACT FORM =====================
+document.getElementById('contact-form-i9j1').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const name = document.getElementById('contact-name-k2l3').value.trim();
+  const email = document.getElementById('contact-email-m4n5').value.trim();
+  if (!name || !email) {
+    showToast('Please fill in your name and email.');
+    return;
+  }
+  showToast("Message sent! I'll get back to you soon.");
+  this.reset();
+});
+
+// ===================== INIT =====================
+lucide.createIcons();
+initRouter();
+</script>
+</body>
+</html>
